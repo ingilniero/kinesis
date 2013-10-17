@@ -51,7 +51,7 @@ class Branch
     @doc.css('.img-cont a img')
   end
 
-  def schedules
+  def movies_schedules
     @doc.css('.block')
   end
 
@@ -80,19 +80,43 @@ class Branch
   end
 
   def get_schedules
-    timetables = {}
-    schedules.each_with_index do |schedule, index_1|
-      date = {}
-      schedule.css('.sch-row').each do |row|
-        date[:day] = row.css('p').text
-        times = {}
-        row.css('.normaltools').each_with_index do |time, index_2|
-          times[index_2 + 1] = time.text
+    movies_schedules.each_with_index do |movie, index_1|
+
+      count = 1
+      dates = {}
+      movie.css('p').each_with_index do |day, index_2|
+        date = {}
+        if index_2.even?
+          date[:day] = day.text
+          dates[count] = date
+          count += 1
         end
-        date[:times] = times
       end
-      timetables[index_1 + 1] = date
-      @elements[index_1][:schedules] = timetables
+
+      firsts = movie.at_css('.sch-row').css('a')
+      times = {}
+
+      firsts.each_with_index do |a, index|
+        times[index + 1] = a.text
+      end
+
+      dates[1][:times] = times
+
+      times2 = {}
+
+      count2 = 1
+      movie.css('.normaltools').each_with_index do |time, index_3|
+        if index_3 >= firsts.length
+          times2[count2] = time.text
+          count2 += 1
+        end
+      end
+
+      if dates[2]
+        dates[2][:times] = times2
+      end
+
+      @elements[index_1][:schedules] = dates
     end
   end
 
