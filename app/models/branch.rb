@@ -79,44 +79,50 @@ class Branch
     end
   end
 
+  def get_days(movie)
+    count = 1
+    movie.css('p').each_with_index do |day, index_2|
+      date = {}
+      if index_2.even?
+        date[:day] = day.text
+        @dates[count] = date
+        count += 1
+      end
+    end
+  end
+
+  def get_first_times(movie)
+    times = {}
+    firsts = movie.at_css('.sch-row').css('a')
+
+    firsts.each_with_index do |a, index|
+      times[index + 1] = a.text
+    end
+
+    @dates[1][:times] = times
+  end
+
+  def get_second_times(movie, length)
+    times = {}
+    count = 1
+    movie.css('.normaltools').each_with_index do |time, index|
+      if index >= length
+        times[count] = time.text
+        count += 1
+      end
+    end
+    @dates[2][:times] = times
+  end
+
   def get_schedules
-    movies_schedules.each_with_index do |movie, index_1|
+    movies_schedules.each_with_index do |movie, index|
+      @dates = {}
 
-      count = 1
-      dates = {}
-      movie.css('p').each_with_index do |day, index_2|
-        date = {}
-        if index_2.even?
-          date[:day] = day.text
-          dates[count] = date
-          count += 1
-        end
-      end
+      get_days(movie)
+      length =  get_first_times(movie).length
+      get_second_times(movie, length) if @dates[2]
 
-      firsts = movie.at_css('.sch-row').css('a')
-      times = {}
-
-      firsts.each_with_index do |a, index|
-        times[index + 1] = a.text
-      end
-
-      dates[1][:times] = times
-
-      times2 = {}
-
-      count2 = 1
-      movie.css('.normaltools').each_with_index do |time, index_3|
-        if index_3 >= firsts.length
-          times2[count2] = time.text
-          count2 += 1
-        end
-      end
-
-      if dates[2]
-        dates[2][:times] = times2
-      end
-
-      @elements[index_1][:schedules] = dates
+      @elements[index][:schedules] = @dates
     end
   end
 
