@@ -19,7 +19,7 @@ class Movie
   private
 
   def url
-    open("http://cinemex.com/cartelera/pelicula/#{19189}")
+    open("http://cinemex.com/cartelera/pelicula/#{@id}")
   end
 
   def init
