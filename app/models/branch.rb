@@ -12,6 +12,7 @@ class Branch
   def get_json
     init
     get_names
+    get_ids
     get_types
     get_images
     get_schedules
@@ -58,6 +59,12 @@ class Branch
   def get_names
     movies.each_with_index do |movie, index|
       @elements[index][:name] = movie.text
+    end
+  end
+
+  def get_ids
+    movies.each_with_index do |movie, index|
+      @elements[index][:id] = movie.at_css('a')['href'].split('/').last
     end
   end
 
