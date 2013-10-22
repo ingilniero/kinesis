@@ -33,4 +33,6 @@ group :test do
   gem 'fivemat'
   gem 'launchy'
   gem 'poltergeist'
+  gem 'vcr'
+  gem 'webmock'
 end
